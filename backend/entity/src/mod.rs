@@ -5,3 +5,4 @@ pub mod prelude;
 pub mod file;
 pub mod subject;
 pub mod unit;
+pub mod user;

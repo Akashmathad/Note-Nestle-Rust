@@ -3,3 +3,4 @@
 pub use super::file::Entity as File;
 pub use super::subject::Entity as Subject;
 pub use super::unit::Entity as Unit;
+pub use super::user::Entity as User;

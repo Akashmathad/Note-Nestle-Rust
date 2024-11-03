@@ -2,6 +2,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod m20241029_105944_create_subjects;
 mod m20241103_005431_subject_changes;
+mod m20241103_073205_user_table;
 
 pub struct Migrator;
 
@@ -11,6 +12,7 @@ impl MigratorTrait for Migrator {
         vec![
             Box::new(m20241029_105944_create_subjects::Migration),
             Box::new(m20241103_005431_subject_changes::Migration),
+            Box::new(m20241103_073205_user_table::Migration),
         ]
     }
 }
