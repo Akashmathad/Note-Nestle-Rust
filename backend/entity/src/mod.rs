@@ -2,6 +2,7 @@
 
 pub mod prelude;
 
+pub mod feedback;
 pub mod file;
 pub mod subject;
 pub mod unit;

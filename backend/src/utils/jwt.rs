@@ -2,16 +2,17 @@ use super::constants;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
     pub exp: usize,
     pub iat: usize,
     pub email: String,
-    pub id: i32,
+    pub id: Uuid,
 }
 
-pub fn encode_jwt(email: String, id: i32) -> Result<String, jsonwebtoken::errors::Error> {
+pub fn encode_jwt(email: String, id: Uuid) -> Result<String, jsonwebtoken::errors::Error> {
     let now = Utc::now();
     let expire = Duration::hours(24);
 
