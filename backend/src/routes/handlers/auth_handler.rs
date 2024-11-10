@@ -1,5 +1,6 @@
+use crate::utils::jwt::encode_jwt;
+use crate::utils::{api_response, app_state::AppState};
 use actix_web::{post, web, Responder};
-use entity::user;
 use sea_orm::ActiveModelTrait;
 use sea_orm::ColumnTrait;
 use sea_orm::Condition;
@@ -7,12 +8,9 @@ use sea_orm::EntityTrait;
 use sea_orm::QueryFilter;
 use sea_orm::Set;
 use serde::{Deserialize, Serialize};
+use serde_json::to_string;
 use sha256::digest;
 use uuid::Uuid;
-
-use crate::utils::app_state;
-use crate::utils::jwt::encode_jwt;
-use crate::utils::{api_response, app_state::AppState};
 
 #[derive(Serialize, Deserialize)]
 struct RegisterModel {
@@ -24,6 +22,20 @@ struct RegisterModel {
 struct LoginModel {
     email: String,
     password: String,
+}
+
+#[derive(Serialize, Deserialize)]
+struct ApiBody<T> {
+    status: String,
+    token: String,
+    data: T,
+}
+
+#[derive(Serialize, Deserialize)]
+struct LoginBody {
+    id: Uuid,
+    name: String,
+    email: String,
 }
 
 #[post("/register")]
@@ -65,7 +77,19 @@ pub async fn login(
     }
 
     let user_data = user.unwrap();
-    let token = encode_jwt(user_data.email, user_data.id).unwrap();
+    let token = encode_jwt(user_data.email.clone(), user_data.id).unwrap();
 
-    api_response::ApiResponse::new(200, format!("{{'Token': '{}'}}", token))
+    let login_body: LoginBody = LoginBody {
+        id: user_data.id,
+        name: user_data.name,
+        email: user_data.email,
+    };
+
+    let body: ApiBody<LoginBody> = ApiBody {
+        status: "Success".to_string(),
+        token,
+        data: login_body,
+    };
+
+    api_response::ApiResponse::new(200, to_string(&body).unwrap())
 }

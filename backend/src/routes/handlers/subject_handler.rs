@@ -1,5 +1,6 @@
 use actix_web::delete;
 use actix_web::{get, post, web, Responder};
+use entity::feedback::Model;
 use entity::{subject, unit};
 use sea_orm::{ActiveModelTrait, EntityTrait};
 use sea_orm::{ColumnTrait, QueryOrder};
@@ -23,6 +24,12 @@ struct UnitModel {
     subject_Id: String,
 }
 
+#[derive(Serialize, Deserialize)]
+struct ApiBody<T> {
+    status: String,
+    data: T,
+}
+
 #[post("/create_subject")]
 pub async fn create_subject(
     app_state: web::Data<AppState>,
@@ -37,7 +44,12 @@ pub async fn create_subject(
     .await
     .unwrap();
 
-    api_response::ApiResponse::new(200, to_string(&subject).unwrap())
+    let body: ApiBody<entity::subject::Model> = ApiBody {
+        status: "Success".to_string(),
+        data: subject,
+    };
+
+    api_response::ApiResponse::new(200, to_string(&body).unwrap())
 }
 
 #[post("/create_unit")]
@@ -54,7 +66,12 @@ pub async fn create_unit(
     .await
     .unwrap();
 
-    api_response::ApiResponse::new(200, to_string(&unit).unwrap())
+    let body: ApiBody<entity::unit::Model> = ApiBody {
+        status: "Success".to_string(),
+        data: unit,
+    };
+
+    api_response::ApiResponse::new(200, to_string(&body).unwrap())
 }
 
 #[delete("/delete_unit/{unit_Id}")]
@@ -93,7 +110,12 @@ pub async fn get_units(
         .await
         .unwrap();
 
-    api_response::ApiResponse::new(200, to_string(&units).unwrap())
+    let body: ApiBody<Vec<entity::unit::Model>> = ApiBody {
+        status: "Success".to_string(),
+        data: units,
+    };
+
+    api_response::ApiResponse::new(200, to_string(&body).unwrap())
 }
 
 #[get("/subjects/{branch}")]
@@ -108,5 +130,10 @@ pub async fn get_subjects(
         .await
         .unwrap();
 
-    api_response::ApiResponse::new(200, to_string(&subjects).unwrap())
+    let body: ApiBody<Vec<entity::subject::Model>> = ApiBody {
+        status: "Success".to_string(),
+        data: subjects,
+    };
+
+    api_response::ApiResponse::new(200, to_string(&body).unwrap())
 }
